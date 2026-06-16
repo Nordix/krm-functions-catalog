@@ -39,9 +39,7 @@ FUNCTIONS := \
 	set-image \
 	set-labels \
 	set-namespace \
-	set-project-id \
 	set-standard-labels \
-	source-gcloud-config \
 	starlark \
 	upsert-resource \
 	sleep

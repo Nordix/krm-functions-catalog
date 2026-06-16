@@ -9,8 +9,6 @@ import (
 	"github.com/kptdev/krm-functions-sdk/go/fn"
 )
 
-
-
 //go:embed README.md
 var readme []byte
 
@@ -23,5 +21,3 @@ func main() {
 		os.Exit(1)
 	}
 }
-
-
