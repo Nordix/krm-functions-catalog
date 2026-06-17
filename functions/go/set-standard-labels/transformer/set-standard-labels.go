@@ -14,17 +14,17 @@ var _ fn.Runner = &SetStandardLabels{}
 type SetStandardLabels struct {
 	forDeployment string
 	// TBD: validate whether the recommended labels from the ResourceList.Items are set as expected.
-	validateOnly bool
+	// validateOnly bool : was unused
 }
 
 // FnConfigFromLabel creates a FunctionConfig object for `set-label` KRM function based on the recommended labels `data`.
 func FnConfigFromLabels(data map[string]string) *fn.KubeObject {
 	fnConfig := fn.NewEmptyKubeObject()
-	fnConfig.SetKind(SetLabelFnKind)
-	fnConfig.SetAPIVersion("v1")
-	fnConfig.SetName(SetLabelFnName)
-	fnConfig.SetAnnotation(fn.KptLocalConfig, "true")
-	fnConfig.SetNestedStringMap(data, "data")
+	_ = fnConfig.SetKind(SetLabelFnKind)
+	_ = fnConfig.SetAPIVersion("v1")
+	_ = fnConfig.SetName(SetLabelFnName)
+	_ = fnConfig.SetAnnotation(fn.KptLocalConfig, "true")
+	_ = fnConfig.SetNestedStringMap(data, "data")
 	return fnConfig
 }
 
@@ -55,10 +55,7 @@ func (r *SetStandardLabels) IsDeploymentPackage(items fn.KubeObjects) bool {
 		// This package-context.yaml is a usage of variant construction that serves for deployment purpose.
 		// If the usage of package-context.yaml is changed, this function should change the condition as well.
 		forDeployments := items.Where(fn.IsGroupKind(schema.GroupKind{Kind: PackageContextKind})).Where(fn.IsName(PackageContextName))
-		if len(forDeployments) == 0 {
-			return false
-		}
-		return true
+		return len(forDeployments) == 0
 	}
 	return strings.ToLower(r.forDeployment) == "true"
 }
