@@ -6,3 +6,6 @@ metadata:
     config.kubernetes.io/local-config: "true"
 info:
   description: sample description
+pipeline:
+  mutators:
+    - image: ghcr.io/kptdev/krm-functions-catalog/set-standard-labels:latest

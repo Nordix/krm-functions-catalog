@@ -1,4 +1,4 @@
-image: gcr.io/kpt-fn/set-standard-labels
+image: ghcr.io/kpt-fn/set-standard-labels
 description: Add Kubernetes recommended labels to Kpt package resources.
 tags:
   - mutator
