@@ -12,6 +12,7 @@ import (
 var _ fn.Runner = &SetStandardLabels{}
 
 type SetStandardLabels struct {
+	annotations   map[string]string
 	forDeployment string
 	// TBD: validate whether the recommended labels from the ResourceList.Items are set as expected.
 	// validateOnly bool : was unused
@@ -50,7 +51,7 @@ func (r *SetStandardLabels) RecommendedLabels(items fn.KubeObjects) (map[string]
 }
 
 func (r *SetStandardLabels) IsDeploymentPackage(items fn.KubeObjects) bool {
-	if r.forDeployment == "" {
+	if r.annotations["forDeployment"] == "" {
 		// We check the existence of package-context.yaml file to tell whether it's a deployable package or not.
 		// This package-context.yaml is a usage of variant construction that serves for deployment purpose.
 		// If the usage of package-context.yaml is changed, this function should change the condition as well.
