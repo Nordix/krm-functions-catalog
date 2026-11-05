@@ -1,4 +1,4 @@
-// Copyright 2021 The kpt Authors
+// Copyright 2021, 2026 The kpt Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,12 +17,13 @@ package main
 import (
 	"os"
 
+	"github.com/kptdev/kpt/api/kubeobject"
 	"github.com/kptdev/krm-functions-catalog/functions/go/render-helm-chart/helmfn"
 	"github.com/kptdev/krm-functions-sdk/go/fn"
 )
 
 func main() {
-	if err := fn.AsMain(fn.ResourceListProcessorFunc(helmfn.RenderHelmChart)); err != nil {
+	if err := fn.AsMain(kubeobject.ResourceListProcessorFunc(helmfn.RenderHelmChart)); err != nil {
 		os.Exit(1)
 	}
 }

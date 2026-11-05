@@ -1,3 +1,17 @@
+// Copyright 2026 The kpt Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package main
 
 import (
@@ -6,6 +20,8 @@ import (
 	"strings"
 
 	"github.com/kptdev/krm-functions-sdk/go/fn"
+
+	"github.com/kptdev/kpt/api/kubeobject"
 )
 
 const (
@@ -15,24 +31,24 @@ const (
 
 // nolint
 func main() {
-	if err := fn.AsMain(fn.ResourceListProcessorFunc(deleteAnnotations)); err != nil {
+	if err := fn.AsMain(kubeobject.ResourceListProcessorFunc(deleteAnnotations)); err != nil {
 		os.Exit(1)
 	}
 }
 
-func deleteAnnotations(rl *fn.ResourceList) (bool, error) {
+func deleteAnnotations(rl *kubeobject.ResourceList) (bool, error) {
 
 	var annotationKeys []string
 	annotationKeys, err := getAnnotationKeys(rl.FunctionConfig)
 
 	if err != nil {
-		rl.Results = append(rl.Results, fn.ErrorResult(err))
+		rl.Results = append(rl.Results, kubeobject.ErrorResult(err))
 		return false, err
 	}
 
 	items, err := processResources(rl.Items, annotationKeys)
 	if err != nil {
-		rl.Results = append(rl.Results, fn.ErrorResult(err))
+		rl.Results = append(rl.Results, kubeobject.ErrorResult(err))
 		return false, err
 	}
 
@@ -43,8 +59,8 @@ func deleteAnnotations(rl *fn.ResourceList) (bool, error) {
 	return true, nil
 }
 
-func processResources(objects []*fn.KubeObject, annotationKeys []string) ([]*fn.Result, error) {
-	var resultItems []*fn.Result
+func processResources(objects []*kubeobject.KubeObject, annotationKeys []string) ([]*kubeobject.Result, error) {
+	var resultItems []*kubeobject.Result
 	var currObjName string
 	var prunedObjCtr int
 	for _, o := range objects {
@@ -66,29 +82,29 @@ func processResources(objects []*fn.KubeObject, annotationKeys []string) ([]*fn.
 
 				itemFilePath := o.GetAnnotations()["internal.config.kubernetes.io/path"]
 
-				resultItems = append(resultItems, &fn.Result{
+				resultItems = append(resultItems, &kubeobject.Result{
 					Message: fmt.Sprintf("Annonation: [%s] removed from resource: [%s]", annotationKey, o.GetName()),
-					File: &fn.File{
+					File: &kubeobject.File{
 						Path: itemFilePath,
 					},
-					Severity: fn.Info,
+					Severity: kubeobject.Info,
 				})
 			}
 		}
 	}
 
 	if len(resultItems) > 0 {
-		infoResultSlice := []*fn.Result{}
-		infoResultSlice = append(infoResultSlice, &fn.Result{
-			Severity: fn.Info,
+		var infoResultSlice []*kubeobject.Result
+		infoResultSlice = append(infoResultSlice, &kubeobject.Result{
+			Severity: kubeobject.Info,
 			Message:  fmt.Sprintf("The provided annotations were deleted from %d resource(s)", prunedObjCtr),
 		})
 
 		resultItems = append(infoResultSlice, resultItems...)
 	} else if len(resultItems) == 0 {
-		resultItems = append(resultItems, &fn.Result{
+		resultItems = append(resultItems, &kubeobject.Result{
 			Message:  "None of the resources had the provided annotations to delete",
-			Severity: fn.Info,
+			Severity: kubeobject.Info,
 		})
 	}
 
@@ -96,7 +112,7 @@ func processResources(objects []*fn.KubeObject, annotationKeys []string) ([]*fn.
 }
 
 // getAnnotationKeys gets the keys to delete from resources from the functionConfig
-func getAnnotationKeys(fc *fn.KubeObject) ([]string, error) {
+func getAnnotationKeys(fc *kubeobject.KubeObject) ([]string, error) {
 	annotationKeysString, found, err := fc.NestedString("data", annotationKeysLiteral)
 
 	if !found || annotationKeysString == "" {

@@ -1,4 +1,4 @@
-// Copyright 2022 The kpt Authors
+// Copyright 2022, 2026 The kpt Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package main
 import (
 	"syscall/js"
 
+	"github.com/kptdev/kpt/api/kubeobject"
 	"github.com/kptdev/krm-functions-catalog/functions/go/set-namespace/transformer"
 	"github.com/kptdev/krm-functions-sdk/go/fn"
 )
@@ -38,7 +39,7 @@ func run() error {
 }
 
 func transformNamespace(input []byte) ([]byte, error) {
-	return fn.Run(fn.ResourceListProcessorFunc(transformer.Run), []byte(input))
+	return fn.Run(kubeobject.ResourceListProcessorFunc(transformer.Run), []byte(input))
 }
 
 // This funcion will return ALL Results with Severity error,
@@ -63,7 +64,7 @@ func resourceListProcessorWrapper(resourceList *[]byte) js.Func {
 
 func resourceListProcessorErrors(resourceList *[]byte) js.Func {
 	jsonFunc := js.FuncOf(func(this js.Value, args []js.Value) any {
-		rl, err := fn.ParseResourceList(*resourceList)
+		rl, err := kubeobject.ParseResourceList(*resourceList)
 		if err != nil {
 			return ""
 		}

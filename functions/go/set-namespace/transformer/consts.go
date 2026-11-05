@@ -1,4 +1,4 @@
-// Copyright 2022 The kpt Authors
+// Copyright 2022, 2026 The kpt Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/kptdev/krm-functions-sdk/go/fn"
+	"github.com/kptdev/kpt/api/kubeobject"
 )
 
 const (
@@ -35,7 +35,7 @@ const (
 var (
 	// <group>/namespaces/<namespace>/<kind>/<name>
 	namespacedResourcePattern = regexp.MustCompile(`\A([-.\w]*)/namespaces/([-.\w]*)/([-.\w]*)/([-.\w]*)\z`)
-	nsScopedDependsOnFromId   = func(id *fn.ResourceIdentifier) string {
+	nsScopedDependsOnFromId   = func(id *kubeobject.ResourceIdentifier) string {
 		return fmt.Sprintf("%v/namespaces/%v/%v/%v", id.Group, id.Namespace, id.Kind, id.Name)
 	}
 )

@@ -20,6 +20,8 @@ import (
 	"os"
 
 	"github.com/kptdev/krm-functions-sdk/go/fn"
+
+	"github.com/kptdev/kpt/api/kubeobject"
 )
 
 //go:embed README.md
@@ -29,12 +31,12 @@ var readme []byte
 var metadata []byte
 
 func main() {
-	if err := fn.AsMain(fn.ResourceListProcessorFunc(processBar), fn.WithDocs(readme, metadata)); err != nil {
+	if err := fn.AsMain(kubeobject.ResourceListProcessorFunc(processBar), fn.WithDocs(readme, metadata)); err != nil {
 		os.Exit(1)
 	}
 }
 
-func processBar(_ *fn.ResourceList) (bool, error) {
+func processBar(_ *kubeobject.ResourceList) (bool, error) {
 	fn.Logf("bar\n")
 	return false, fmt.Errorf("bar")
 }

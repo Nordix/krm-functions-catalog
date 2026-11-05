@@ -18,14 +18,16 @@ import (
 	"os"
 
 	"github.com/kptdev/krm-functions-sdk/go/fn"
+
+	"github.com/kptdev/kpt/api/kubeobject"
 )
 
 func main() {
-	if err := fn.AsMain(fn.ResourceListProcessorFunc(noOp)); err != nil {
+	if err := fn.AsMain(kubeobject.ResourceListProcessorFunc(noOp)); err != nil {
 		os.Exit(1)
 	}
 }
 
-func noOp(*fn.ResourceList) (bool, error) {
+func noOp(*kubeobject.ResourceList) (bool, error) {
 	return true, nil
 }
